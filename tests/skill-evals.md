@@ -188,7 +188,7 @@ notes/ai/agents.md
 
 ### Must not do
 
-- Force-create the default `knowledge/java/` tree.
+- Force-create the default `knowledge/` tree or migrate files without user intent.
 
 ---
 
@@ -208,6 +208,136 @@ Expected: do not force an `面试回答` section.
 
 ---
 
+## Eval 11 — First-run Onboarding
+
+### Repository state
+
+The target knowledge repository has no `.gpt2git/profile.yaml` and no established knowledge taxonomy.
+
+### User
+
+“第一次用这个 Skill，帮我以后把学习内容收录到这个仓库。”
+
+### Must do
+
+- Enter onboarding before inventing a large directory tree.
+- Ask for the user's primary technical direction and stack at a useful level, e.g. backend / frontend / AI engineering / data / DevOps plus languages, frameworks, data stores, middleware, or tools they actually use.
+- Keep onboarding concise; do not conduct a long survey when one compact answer can establish the profile.
+- Produce client-neutral `.gpt2git` protocol files after the required information is known and write access is available.
+
+### Must not do
+
+- Assume Java backend by default.
+- Create dozens of empty domain directories from a generic role label.
+
+---
+
+## Eval 12 — Minimal Skeleton, Lazy Growth
+
+### Onboarding answer
+
+User: “Java 后端为主，也做 Agent。Spring Boot、MySQL、Redis、Kafka、LangGraph、AgentScope。”
+
+### Must do
+
+- Record these as profile/taxonomy hints.
+- Create only `.gpt2git` protocol files plus the minimum repository structure required by the runtime.
+- Materialize a knowledge file or domain only when the first captured topic needs it.
+
+### Must not do
+
+- Pre-create every possible backend folder such as MQ, network, OS, distributed transaction, JVM, JUC, Elasticsearch, Kubernetes, etc.
+- Create empty placeholder Markdown files for technologies the user has not discussed.
+
+---
+
+## Eval 13 — Profile Reuse Across Sessions
+
+### Repository state
+
+`.gpt2git/profile.yaml` already says the user works primarily in backend + AI engineering with Java, Spring Boot, MySQL, Redis, Kafka, RAG, LangGraph, and AgentScope.
+
+### New session
+
+User discusses Kafka ISR and says “收录”.
+
+### Must do
+
+- Reuse the existing profile without asking the onboarding questions again.
+- Resolve the topic using existing taxonomy and repository state.
+- Add or merge the Kafka knowledge in the most stable existing location.
+
+### Must not do
+
+- Re-onboard merely because the AI client or chat session changed.
+
+---
+
+## Eval 14 — Adaptive Taxonomy
+
+### Repository state
+
+The profile contains `backend` and `ai-engineering`. No Redis knowledge file exists yet.
+
+### Conversation
+
+User learns Redis cache breakdown and says “收录”.
+
+### Must do
+
+- Route the topic by its stable mechanism/category, not by blindly nesting everything under `backend/`.
+- Prefer a shallow path such as `knowledge/cache/redis.md` if that matches the repository protocol.
+- Update taxonomy hints only when a new stable mapping is useful.
+
+### Must not do
+
+- Produce deep paths like `knowledge/backend/middleware/cache/redis/cache-breakdown.md`.
+- Create one file per question by default.
+
+---
+
+## Eval 15 — Cross-client Portability
+
+### Repository state
+
+A repository initialized by ChatGPT contains `.gpt2git/profile.yaml`, `.gpt2git/taxonomy.yaml`, `.gpt2git/config.yaml`, and knowledge files.
+
+### Runtime
+
+A later capture is performed from Claude Code or Codex with equivalent repository read/write capabilities.
+
+### Must do
+
+- Treat `.gpt2git` as the source of repository-side configuration.
+- Reuse the same KnowledgeUnit and taxonomy semantics.
+- Avoid client-specific fields in repository protocol files unless explicitly namespaced as optional metadata.
+
+### Must not do
+
+- Require ChatGPT-specific state for correctness.
+- Fork the user's knowledge into separate ChatGPT / Claude / Codex directory trees.
+
+---
+
+## Eval 16 — Future MCP Boundary
+
+### Scenario
+
+The runtime has a future GPT2Git MCP server available.
+
+### Must do
+
+- Keep conversation interpretation and KnowledgeUnit extraction in the reasoning/client layer.
+- Allow MCP to own repository-oriented operations such as profile retrieval, topic resolution, search, merge persistence, and commit verification.
+- Use the same `.gpt2git` protocol and KnowledgeUnit semantics as Skill-only mode.
+
+### Must not do
+
+- Redefine a second incompatible taxonomy for MCP.
+- Treat raw GitHub CRUD method names as the product-level knowledge API.
+
+---
+
 ## Release Gate
 
 Before a behavioral release, manually evaluate at least:
@@ -217,5 +347,9 @@ Before a behavioral release, manually evaluate at least:
 - Eval 3 — Merge Instead of Duplicate
 - Eval 6 — Raw Transcript Failure
 - Eval 7 — Unverified Commit Claim
+- Eval 11 — First-run Onboarding
+- Eval 12 — Minimal Skeleton, Lazy Growth
+- Eval 13 — Profile Reuse Across Sessions
+- Eval 15 — Cross-client Portability
 
-Any failure in follow-up preservation or GitHub-write truthfulness blocks release.
+Any failure in follow-up preservation, GitHub-write truthfulness, lazy taxonomy growth, or portable profile reuse blocks release.
