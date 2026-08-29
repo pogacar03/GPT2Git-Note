@@ -2,9 +2,9 @@
 
 # 🧠 GPT2Git-Note
 
-### Turn AI conversations into a Git-native developer learning memory
+### 把 AI 对话变成 Git-native 的开发者学习记忆
 
-**Chat → Follow-up → Misconception → Mental Model → Git**
+**对话 → 追问 → 误区 → 心智模型 → Git**
 
 <p>
   <img src="https://img.shields.io/badge/Agent-Skill-111827?style=for-the-badge" alt="Agent Skill" />
@@ -13,125 +13,125 @@
   <img src="https://img.shields.io/badge/version-0.1.0-7C3AED?style=for-the-badge" alt="Version" />
 </p>
 
-**Don't save the chat. Save how you learned.**
+**不要保存聊天。保存你是怎么学会的。**
 
-**English** · [简体中文](README.zh-CN.md)
+[English](README.en.md) · **简体中文**
 
-[Quick Start](#-quick-start) · [How It Works](#-how-it-works) · [Before / After](#-before--after) · [Design Principles](#-design-principles) · [Roadmap](#-roadmap)
+[快速开始](#-快速开始) · [工作原理](#-工作原理) · [前后对比](#-前后对比) · [设计原则](#-设计原则) · [路线图](#-路线图)
 
 </div>
 
 ---
 
-## ✨ What is GPT2Git-Note?
+## ✨ GPT2Git-Note 是什么？
 
-GPT2Git-Note is an Agent Skill for developers who learn through AI conversations.
+GPT2Git-Note 是一个面向开发者学习场景的 Agent Skill。
 
-Ask about Java, databases, distributed systems, Agent engineering, RAG, algorithms, or any other technical topic the way you normally would. Keep asking follow-up questions until the concept actually makes sense. Then say one thing:
+你像平时一样和 AI 讨论 Java、数据库、分布式系统、Agent、RAG、算法或其他技术问题，不断追问，直到真正理解。最后只需要说一句：
 
 ```text
-capture this
+收录
 ```
 
-GPT2Git-Note compiles that learning path into durable knowledge and maintains it in your GitHub repository.
+GPT2Git-Note 会把这段学习过程整理成可长期维护的知识，并写入你的 GitHub Repository。
 
-It does not store a raw chat log. It stores a structured learning unit:
+它保存的不是聊天流水，而是一个结构化的学习单元：
 
 ```text
 KnowledgeUnit
-├── Primary Question
-├── Core Answer
-├── Follow-ups[]          ⭐
-├── Misconceptions[]      ⭐
-├── Corrections[]
-├── Final Mental Model
-├── Interview Answer?
-└── Related Topics[]
+├── 原始问题
+├── 核心回答
+├── 关键追问[]          ⭐
+├── 错误理解[]          ⭐
+├── 纠正过程[]
+├── 最终心智模型
+├── 面试回答?
+└── 相关知识[]
 ```
 
-> **The valuable part is not only the correct answer. It is where you got stuck, what you asked next, and which explanation finally made the idea click.**
+> **真正值得保存的，不只是正确答案，还有你为什么没懂、你追问了什么，以及哪个解释最终让你想通。**
 
 ---
 
-## 💡 Why?
+## 💡 为什么做这个？
 
-More and more developers learn like this:
+越来越多开发者的学习过程其实是这样的：
 
 ```text
-Why does Spring transaction self-invocation fail?
+为什么 Spring 事务自调用会失效？
         ↓
-AI gives the first explanation
+AI 给出第一次解释
         ↓
-But if I entered through the Proxy, why is `this` still the Target?
+但我明明是从 Proxy 进来的，为什么 this 还是 Target？
         ↓
-clarification
+继续解释
         ↓
-Then why does dependency injection expose the Proxy?
+那为什么依赖注入拿到的又是 Proxy？
         ↓
-another clarification
+继续追问
         ↓
-finally: a complete mental model
+终于形成完整心智模型
 ```
 
-Traditional approaches usually fail in one of four ways:
+传统方案往往有四个问题：
 
-| Approach | Problem |
+| 方式 | 问题 |
 |---|---|
-| Save only the final AI answer | Loses the follow-ups that exposed the real knowledge gap |
-| Export the full conversation | Too noisy to review later |
-| Manually rewrite notes in Obsidian / Notion | Adds a second round of work after learning |
-| Create one Markdown file per conversation | Quickly produces fragmented, duplicated notes |
+| 只保存 AI 最终答案 | 丢掉真正暴露认知缺口的追问 |
+| 导出整段聊天 | 信息密度低，之后很难复习 |
+| 手动整理 Obsidian / Notion | 学完以后还要再做一遍笔记劳动 |
+| 每轮聊天生成一个 Markdown | 很快出现大量重复、碎片文件 |
 
-GPT2Git-Note takes a different approach:
+GPT2Git-Note 的思路是：
 
-> **Let AI compile the learning process into knowledge. Let Git preserve and evolve it.**
+> **让 AI 把学习过程编译成知识，让 Git 负责长期保存和演化。**
 
 ---
 
-## 🔥 Before / After
+## 🔥 前后对比
 
-### ❌ Raw chat export
+### ❌ 原始聊天导出
 
 ```text
-User: Why doesn't this.b() trigger @Transactional?
-Assistant: Because Spring AOP...
+User: Spring 的 this.b() 为什么不走事务？
+Assistant: 因为 Spring AOP...
 
-User: But I already entered a() through the Proxy. Why isn't `this` the Proxy?
-Assistant: Because the actual method body still runs on the Target...
+User: 但我已经从 Proxy 进入 a() 了，为什么 this 不是 Proxy？
+Assistant: 因为真正执行 a() 的对象还是 Target...
 
-User: Then why does @Autowired give me the Proxy?
-Assistant: Because Spring ultimately exposes the wrapped bean...
+User: 那为什么 @Autowired 拿到的是 Proxy？
+Assistant: 因为 Spring 最终暴露的是代理对象...
 ```
 
-Months later, you have to reread the whole transcript to reconstruct the reasoning.
+几个月以后重新打开，你需要重新读完整段对话才能恢复当时的思路。
 
 ### ✅ GPT2Git-Note
 
 ```markdown
-# Why Spring Transaction Self-Invocation Fails
+# Spring 事务自调用为什么失效
 
-## 1. Primary Question
-Why doesn't calling this.b() inside the same class trigger @Transactional?
+## 1. 原始问题
+为什么同一个类内部 this.b() 不会触发 @Transactional？
 
-## 2. Core Answer
-@Transactional relies on Spring AOP proxies.
-Only calls that pass through the Proxy receive transaction interception.
+## 2. 核心回答
+@Transactional 依赖 Spring AOP Proxy。
+只有经过 Proxy 的调用才会执行事务增强。
 
-## 3. My Follow-ups ⭐
+## 3. 我的追问 ⭐
 
-### If I entered a() through the Proxy, why is `this` still the Target?
-The Proxy intercepts and forwards the call, but the method body itself executes on the Target.
+### 为什么已经从 Proxy 进入 a()，this 还是 Target？
+Proxy 负责拦截和转发，但真正执行 a() 方法体的对象仍然是 Target。
 
-### Then why does dependency injection expose the Proxy?
-After AOP wrapping, Spring exposes the proxy object to external callers.
+### 为什么依赖注入拿到的却是 Proxy？
+Spring 完成 AOP 包装后，对外暴露的是代理对象。
 
-## 4. My Previous Misconception
+## 4. 我曾经的错误理解
 
-❌ Once a call enters through the Proxy, `this` inside a() should also be the Proxy.
+❌ 从 Proxy 进入 a() 后，a() 内部的 this 应该也是 Proxy。
 
-✅ The method body executes on the Target, so `this == Target`.
+✅ 方法体最终运行在 Target 上，因此 this == Target。
 
-## 5. Final Mental Model
+## 5. 最终心智模型
 
 Caller → Proxy → Target.a()
                   ↓
@@ -139,83 +139,81 @@ Caller → Proxy → Target.a()
                   ↓
               Target.b()
 
-## 6. Interview Answer
+## 6. 面试回答
 ...
 ```
 
-See the full example: [`examples/spring-transaction-self-invocation.md`](examples/spring-transaction-self-invocation.md)
+完整示例：[`examples/spring-transaction-self-invocation.md`](examples/spring-transaction-self-invocation.md)
 
 ---
 
-## ⚡ Quick Start
+## ⚡ 快速开始
 
-### 1. Learn normally
+### 1. 正常学习
 
-Do not change how you ask questions:
+不需要改变你的提问方式：
 
 ```text
-Why is Kafka throughput so high?
+为什么 Kafka 吞吐量高？
 ```
 
-Keep going:
+继续追问：
 
 ```text
-Why is sequential I/O faster here?
-What exactly does the page cache do?
-Which memory copies does zero-copy eliminate?
-If storage is already fast, where does the bottleneck move next?
+顺序写为什么快？
+Page Cache 在这里做什么？
+零拷贝到底少了哪几次复制？
+如果磁盘已经很快，瓶颈会转移到哪里？
 ```
 
-### 2. Once the concept is clear, say
+### 2. 学明白以后说一句
 
 ```text
-capture this
+收录
 ```
 
-The Skill can also respond to equivalent capture intent such as `save this`, `add this to my notes`, or `store this in GitHub`.
-
-### 3. GPT2Git-Note maintains the repository
+### 3. GPT2Git-Note 自动维护知识库
 
 ```text
-Current learning conversation
-          ↓
-Extract KnowledgeUnit
-          ↓
-Search existing Git knowledge
-          ↓
+当前学习对话
+      ↓
+提取 KnowledgeUnit
+      ↓
+搜索 GitHub 现有知识
+      ↓
 ┌──────────┬──────────┬──────────┐
 │  CREATE  │  MERGE   │  NO-OP   │
 └──────────┴──────────┴──────────┘
-          ↓
-Update Markdown
-          ↓
+      ↓
+更新 Markdown
+      ↓
 GitHub Commit
 ```
 
-No second manual note-taking pass is required.
+你不需要在学习结束后再手动整理一次笔记。
 
 ---
 
-## 🧭 How It Works
+## 🧭 工作原理
 
 ```mermaid
 flowchart LR
-    A[Developer asks AI] --> B[Multi-turn Learning]
-    B --> C[Follow-ups / Corrections]
-    C --> D[User requests capture]
+    A[开发者向 AI 提问] --> B[多轮学习]
+    B --> C[追问 / 纠错]
+    C --> D[用户：收录]
     D --> E[GPT2Git-Note]
-    E --> F[Extract KnowledgeUnit]
-    F --> G[Search Existing Knowledge]
-    G --> H{Decision}
-    H -->|New topic| I[CREATE]
-    H -->|Existing topic| J[MERGE]
-    H -->|No new value| K[NO-OP]
+    E --> F[提取 KnowledgeUnit]
+    F --> G[搜索已有知识]
+    G --> H{决策}
+    H -->|新主题| I[CREATE]
+    H -->|已有主题| J[MERGE]
+    H -->|无新增价值| K[NO-OP]
     I --> L[GitHub]
     J --> L
     K --> L
 ```
 
-GPT2Git-Note treats GitHub as a **persistence layer**, not merely an export destination:
+GPT2Git-Note 把 GitHub 当作 **Persistence Layer**，而不只是导出目标：
 
 ```text
 Markdown     = Knowledge
@@ -225,19 +223,19 @@ AI Runtime   = Reasoning + Execution
 Skill        = Knowledge Curator
 ```
 
-V1 requires no custom database, vector store, or synchronization service.
+V1 不需要自建数据库、向量库或同步服务。
 
 ---
 
-## ⭐ The Core Difference: Follow-ups Are First-Class Data
+## ⭐ 核心差异：追问是一等数据
 
-Most AI note workflows look like this:
+大多数 AI 笔记工具更像：
 
 ```text
 Question → Final Answer
 ```
 
-GPT2Git-Note cares more about the reasoning path:
+GPT2Git-Note 更关注：
 
 ```text
 Question
@@ -255,35 +253,35 @@ Another Follow-up ⭐
 Final Mental Model
 ```
 
-When compression is necessary, the default priority is:
+当内容必须压缩时，默认优先级是：
 
 ```text
-1. Follow-ups + the answers that resolved them
-2. Misconceptions + corrections
-3. Final mental model
-4. Primary question + core answer
-5. Supplementary examples
+1. 关键追问 + 解决这些追问的答案
+2. 错误理解 + 纠正
+3. 最终心智模型
+4. 原始问题 + 核心回答
+5. 补充示例
 ```
 
-Because the most personal part of your knowledge is often not the definition itself. It is:
+因为真正属于你的知识，不是网上随处可见的定义，而是：
 
-> **the exact point where your understanding broke down.**
+> **你到底在哪一步卡住过。**
 
 ---
 
-## 🔀 Git-Native Merge
+## 🔀 Git-native Merge
 
-GPT2Git-Note does **not** default to one file per conversation.
+GPT2Git-Note 不会默认“一轮对话一个文件”。
 
-Before writing, it searches the existing repository and chooses one operation:
+每次写入之前，它先搜索已有知识，再做决策：
 
-| Operation | When |
+| 操作 | 什么时候使用 |
 |---|---|
-| **CREATE** | No existing topic can reasonably absorb the new knowledge |
-| **MERGE** | The conversation deepens an existing topic |
-| **NO-OP** | The repository already contains the useful knowledge |
+| **CREATE** | 没有合适的已有知识可以承载这次内容 |
+| **MERGE** | 新对话深化了已经存在的知识点 |
+| **NO-OP** | 新对话没有带来新的有效知识 |
 
-### ❌ Note explosion
+### ❌ 笔记爆炸
 
 ```text
 spring-transaction.md
@@ -292,19 +290,19 @@ spring-transaction-final.md
 spring-transaction-2026-08-30.md
 ```
 
-### ✅ Evolving knowledge
+### ✅ 持续演化的知识
 
 ```text
 knowledge/java/spring.md
 
-## Spring Transactions
-├── Self-invocation
+## Spring 事务
+├── 自调用失效
 ├── rollbackFor
-├── Propagation
-└── Common failure modes
+├── 传播机制
+└── 事务失效场景
 ```
 
-Git commits can also become knowledge revisions:
+Git Commit 也可以成为认知版本：
 
 ```text
 knowledge: add Spring transaction basics
@@ -314,9 +312,9 @@ knowledge: clarify self-invocation mental model
 
 ---
 
-## 🗂️ Default Developer Taxonomy
+## 🗂️ 默认开发者知识分类
 
-If the target repository has no structure yet, GPT2Git-Note can start with a simple default taxonomy:
+如果目标知识库没有自己的结构，可以从下面的默认分类开始：
 
 ```text
 knowledge/
@@ -342,50 +340,50 @@ knowledge/
     └── patterns.md
 ```
 
-If the user's repository already has a coherent taxonomy, the Skill should follow it instead of forcing a migration.
+如果用户已有稳定的知识结构，Skill 应优先遵循现有结构，而不是强行迁移。
 
 ---
 
-## 📦 Installation
+## 📦 安装
 
-GPT2Git-Note works with Agent runtimes that can load `SKILL.md`. Automatic persistence additionally requires GitHub read/write capability in that runtime.
+GPT2Git-Note 适用于能够读取 `SKILL.md` 的 Agent Runtime。要实现自动提交，还需要对应运行环境具备 GitHub 读写能力。
 
-### Generic Agent Skills directory
+### 通用 Agent Skills 目录
 
 ```bash
 git clone https://github.com/pogacar03/GPT2Git-Note.git \
   ~/.agents/skills/gpt2git-note
 ```
 
-Update later with:
+更新：
 
 ```bash
 cd ~/.agents/skills/gpt2git-note
 git pull
 ```
 
-### Claude Code-style directory
+### Claude Code 风格目录
 
 ```bash
 git clone https://github.com/pogacar03/GPT2Git-Note.git \
   ~/.claude/skills/gpt2git-note
 ```
 
-### Other AI runtimes
+### 其他 AI Runtime
 
-If the runtime supports project instructions or Agent Skills:
+如果环境支持 Project Instructions / Agent Skills：
 
 ```text
-Load SKILL.md
-→ allow GitHub read / search / write actions
-→ choose a target knowledge repository
+加载 SKILL.md
+→ 允许 GitHub read / search / write
+→ 指定目标知识仓库
 ```
 
-> GitHub persistence depends on the runtime exposing GitHub write tools. Without write access, GPT2Git-Note may still produce the compiled KnowledgeUnit, but it must not claim a commit succeeded.
+> GitHub 自动持久化能力取决于具体运行环境。如果没有写权限，Skill 可以生成整理后的 KnowledgeUnit，但不能声称已经 Commit。
 
 ---
 
-## 🧩 Design Principles
+## 🧩 设计原则
 
 <table>
 <tr>
@@ -393,14 +391,14 @@ Load SKILL.md
 
 ### 🧠 Preserve cognition
 
-Keep why the learner got stuck and how the misunderstanding was resolved, not only the final definition.
+保存“为什么没懂”和“怎么搞懂”，而不只是最终定义。
 
 </td>
 <td width="50%" valign="top">
 
 ### ⭐ Follow-ups first
 
-User follow-up questions are first-class knowledge and should survive summarization.
+用户追问是一等数据，不应该在摘要过程中被压掉。
 
 </td>
 </tr>
@@ -409,14 +407,14 @@ User follow-up questions are first-class knowledge and should survive summarizat
 
 ### 🔀 Merge before create
 
-Search first. Prefer evolving an existing topic over producing another Markdown file.
+先搜索，再决定是否创建新知识，避免 Markdown 爆炸。
 
 </td>
 <td width="50%" valign="top">
 
 ### 🔒 Never invent
 
-Do not fabricate misconceptions, experience, measurements, or facts simply to make a note look complete.
+没有表达过的误解、经历或数据，不为了“笔记完整”而杜撰。
 
 </td>
 </tr>
@@ -425,14 +423,14 @@ Do not fabricate misconceptions, experience, measurements, or facts simply to ma
 
 ### ✅ Verify Git writes
 
-Only report a successful commit after the repository write actually succeeds.
+GitHub 写入成功以后才能说“已提交”。
 
 </td>
 <td width="50%" valign="top">
 
 ### 🧱 No backend by default
 
-V1 reuses the Agent runtime and GitHub instead of adding a second persistence stack.
+V1 直接利用 Agent + GitHub，不重复造数据库和同步服务。
 
 </td>
 </tr>
@@ -440,18 +438,18 @@ V1 reuses the Agent runtime and GitHub instead of adding a second persistence st
 
 ---
 
-## 🆚 GPT2Git-Note vs Traditional Notes
+## 🆚 和传统笔记有什么不同？
 
-| | Traditional Notes | Chat Export | GPT2Git-Note |
+| | 传统笔记 | Chat 导出 | GPT2Git-Note |
 |---|---:|---:|---:|
-| Automatic organization | ❌ | ✅ | ✅ |
-| Keeps final answers | ✅ | ✅ | ✅ |
-| Keeps meaningful follow-ups | Manual | ✅ but noisy | **✅ First-class** |
-| Keeps wrong mental models | Manual | Buried in chat | **✅ Structured** |
-| Merges existing knowledge | ❌ | ❌ | **✅** |
-| Git version history | Optional | ❌ | **✅ Native** |
-| Requires another database | Depends | ❌ | **❌** |
-| User owns the data | Depends | Depends | **✅ Git Repository** |
+| 自动整理 | ❌ | ✅ | ✅ |
+| 保存最终答案 | ✅ | ✅ | ✅ |
+| 保存关键追问 | 手动 | ✅ 但噪声大 | **✅ 一等数据** |
+| 保存错误心智模型 | 手动 | 藏在聊天里 | **✅ 结构化** |
+| 自动合并旧知识 | ❌ | ❌ | **✅** |
+| Git 版本历史 | 可选 | ❌ | **✅ Native** |
+| 需要额外数据库 | 视产品而定 | ❌ | **❌** |
+| 数据归用户 | 视产品而定 | 视产品而定 | **✅ Git Repository** |
 
 ---
 
@@ -472,69 +470,70 @@ GPT2Git-Note/
 │   └── superpowers/
 │       └── specs/
 ├── CHANGELOG.md
-├── README.md
-└── README.zh-CN.md
+├── README.md            # 默认简体中文
+├── README.en.md         # English
+└── README.zh-CN.md      # 兼容入口
 ```
 
 ---
 
-## 🧪 Behavioral Tests
+## 🧪 行为测试
 
-Pressure scenarios live in [`tests/skill-evals.md`](tests/skill-evals.md).
+测试场景位于 [`tests/skill-evals.md`](tests/skill-evals.md)。
 
-Release-blocking failures include:
+以下行为属于 release blocker：
 
-- losing meaningful follow-up questions;
-- inventing a misconception the user never expressed;
-- creating duplicate notes where a merge should happen;
-- storing raw transcripts instead of compiled knowledge;
-- claiming a GitHub commit succeeded when it did not;
-- contaminating the note with unrelated earlier conversation context.
+- 丢失关键追问；
+- 杜撰用户从未表达过的错误理解；
+- 明明应该 MERGE 却不断创建新文件；
+- 把原始聊天直接当成知识存储；
+- GitHub 写入失败却声称“已提交”；
+- 把无关的早期聊天污染进当前知识点。
 
 ---
 
-## 🎯 V1 Scope
+## 🎯 V1 边界
 
-GPT2Git-Note intentionally does not require:
+GPT2Git-Note 当前刻意不引入：
 
 - MCP Server
-- custom backend
-- SQL database
-- vector database
-- browser extension
-- background sync service
+- 自建后端
+- SQL Database
+- Vector Database
+- Browser Extension
+- 后台同步服务
 
-V1 tests one core hypothesis:
+V1 只验证一个核心假设：
 
-> **Can one explicit capture command turn a valuable AI learning loop into a clean, evolving GitHub knowledge base?**
+> **一句“收录”，能不能把一段真正有价值的 AI 学习过程，变成一个干净、持续演化的 GitHub 知识库？**
 
 ---
 
-## 🗺️ Roadmap
+## 🗺️ 路线图
 
 - [x] Git-native KnowledgeUnit
-- [x] Follow-up-first capture priority
+- [x] 关键追问优先级
 - [x] CREATE / MERGE / NO-OP
 - [x] English / 简体中文 README
 - [ ] Knowledge mastery / weak-point tracking
-- [ ] Review mode generated from historical misconceptions
-- [ ] PR mode for team knowledge bases
-- [ ] Automatic related-topic linking
-- [ ] Knowledge evolution visualization from Git history
+- [ ] Review mode：根据历史误区自动生成复习问题
+- [ ] PR mode：团队知识库审核
+- [ ] 自动关联 Related Topics
+- [ ] 根据 Git History 可视化知识演化
 - [ ] Cross-runtime MCP layer
-- [ ] More README languages
+- [ ] 更多语言 README
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome for:
+欢迎通过 Issue / PR 补充：
 
-- better learning-conversation → KnowledgeUnit examples;
-- pressure scenarios that expose lost follow-ups;
-- developer-domain taxonomies;
-- difficult Git merge / knowledge merge edge cases;
-- README and installation improvements.
+- 更好的学习对话 → KnowledgeUnit 示例；
+- 容易让 Skill 丢失追问的压力测试；
+- 不同开发领域的 taxonomy；
+- Git merge / note merge 边界案例；
+- 对 README 和安装方式的改进。
 
 ---
 
@@ -542,8 +541,8 @@ Contributions are welcome for:
 
 ### 🧠 GPT2Git-Note
 
-**Don't save the chat. Save how you learned.**
+**不要保存聊天。保存你是怎么学会的。**
 
-**English** · [简体中文](README.zh-CN.md)
+[English](README.en.md) · **简体中文**
 
 </div>
