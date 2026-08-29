@@ -1,117 +1,128 @@
 ---
 name: gpt2git-note
-description: Use when a developer wants to capture, save, merge, or maintain useful learning from an AI conversation in a GitHub knowledge repository, especially after technical Q&A with follow-up questions, corrected misunderstandings, interview preparation, or repeated discussion of an existing topic.
+description: Use when a developer wants to initialize, capture, save, merge, or maintain useful learning from AI conversations in a Git-backed knowledge repository, especially after technical Q&A with follow-up questions, corrected misunderstandings, interview preparation, or repeated discussion of an existing topic.
 ---
 
 # GPT2Git-Note
 
 ## Overview
 
-Turn developer learning conversations into a Git-native knowledge base.
-
-The core principle is:
+Turn developer learning conversations into a portable Git-native knowledge base.
 
 > **Preserve the learning path, not the raw transcript.**
 
-A useful note keeps the primary question, the core explanation, the user's meaningful follow-up questions, any explicitly expressed misconception and correction, and the final mental model. For interview-oriented backend topics, also keep a concise interview-ready answer.
-
-## Trigger
-
-Use this skill when the user expresses capture intent such as:
-
-- `收录`
-- `记一下`
-- `整理到知识库`
-- `存到 GitHub`
-- `更新我的笔记`
-- `把刚才这段并进去`
-
-Do not silently persist ordinary conversations without user intent.
+Follow-ups, explicit misconceptions, corrections, and the final mental model are first-class knowledge.
 
 ## Required References
 
-Load only what the task needs:
+Load only what is needed:
 
 | Need | Read |
 |---|---|
-| Decide note shape and what must be preserved | `references/knowledge-schema.md` |
-| Search, CREATE / MERGE / NO-OP, write and commit behavior | `references/github-merge-protocol.md` |
-| Choose a reasonable developer topic location | `references/developer-taxonomy.md` |
+| First-run onboarding, `.gpt2git` files, cross-client rules | `references/repository-profile.md` |
+| KnowledgeUnit shape | `references/knowledge-schema.md` |
+| CREATE / MERGE / NO-OP and verified persistence | `references/github-merge-protocol.md` |
+| Adaptive topic routing | `references/developer-taxonomy.md` |
+
+## First Run
+
+Before the first capture into a target repository:
+
+1. inspect its existing structure;
+2. check for `.gpt2git/profile.yaml`;
+3. if a coherent structure/profile exists, reuse it;
+4. otherwise run concise onboarding: ask the user's primary technical direction and actual stack at a useful level;
+5. initialize client-neutral `.gpt2git/profile.yaml`, `taxonomy.yaml`, and `config.yaml` when write capability exists.
+
+**Do not create a large empty knowledge tree.** Knowledge paths materialize only when captured topics need them.
+
+Do not re-onboard merely because the chat or AI client changed.
 
 ## Capture Contract
 
-When capture intent occurs:
+When the user expresses capture intent such as `收录`, `记一下`, `存到 GitHub`, or `把刚才这段并进去`:
 
-1. **Select the relevant learning window.** Use the current topic and its meaningful follow-ups; do not drag unrelated earlier conversation into the note.
-2. **Extract the learning structure.** Identify the primary question, core answer, follow-ups, explicit misconceptions, corrections, and final mental model.
-3. **Treat follow-ups as first-class knowledge.** They are not expendable commentary. Preserve their wording faithfully enough that the learner can later remember why they were confused.
-4. **Do not invent misconceptions.** Only record a wrong model when the user's words actually support it.
-5. **Search GitHub before writing.** Decide whether the new knowledge should CREATE, MERGE, or NO-OP.
-6. **Prefer semantic merge over note proliferation.** Deepen an existing coherent topic instead of creating `topic-2.md`, `final.md`, or date-based duplicates.
-7. **Write a clean knowledge artifact, not a transcript.** Remove filler, repetition, acknowledgements, and conversational noise while preserving the reasoning path.
-8. **Verify persistence.** Only report a successful GitHub update or commit after the write action succeeds.
+1. select only the relevant learning window;
+2. extract primary question, core answer, meaningful follow-ups, explicit misconceptions/corrections, and final mental model;
+3. preserve follow-ups faithfully enough to recover why the learner was confused;
+4. never invent a misconception;
+5. resolve the destination from repository state + `.gpt2git` profile/taxonomy + current mechanism;
+6. search before writing and choose CREATE / MERGE / NO-OP;
+7. prefer semantic merge and stable files over one-file-per-question;
+8. write a durable knowledge artifact, not `User:` / `Assistant:` transcript blocks;
+9. verify persistence before reporting success.
 
 ## Knowledge Priority
 
-When compression is necessary, preserve in this order:
+When compression is necessary:
 
-1. meaningful user follow-up questions and their resolving answers;
-2. explicit misconceptions and corrections;
+1. follow-ups + resolving answers;
+2. misconceptions + corrections;
 3. final mental model;
-4. primary question and core answer;
+4. primary question + core answer;
 5. supplementary examples.
 
-## Output Shape
+## Adaptive Structure
 
-A captured topic normally contains:
+Route by stable mechanism, not job title.
 
-```markdown
-# Topic
+Prefer shallow homes such as:
 
-## 1. 原始问题
-
-## 2. 核心回答
-
-## 3. 我的追问 ⭐
-### 追问 1
-### 追问 2
-
-## 4. 我曾经的错误理解
-
-## 5. 最终心智模型
-
-## 6. 面试回答
-
-## 7. 相关知识
+```text
+knowledge/frameworks/spring.md
+knowledge/database/mysql.md
+knowledge/cache/redis.md
+knowledge/messaging/kafka.md
+knowledge/ai/agent.md
 ```
 
-Omit sections that genuinely do not apply. If meaningful follow-ups occurred, `我的追问` is required. `面试回答` is conditional on interview relevance.
+Avoid deep role-first paths such as `backend/middleware/cache/redis/...`.
+
+If the repository already has a coherent custom taxonomy, preserve it and describe it in `.gpt2git/taxonomy.yaml` rather than migrating it automatically.
+
+## Portable Protocol
+
+Repository correctness must not depend on ChatGPT-specific state.
+
+The same repository should remain usable from ChatGPT, Claude Code, Codex, or a future GPT2Git MCP implementation by reusing:
+
+```text
+.gpt2git/profile.yaml
+.gpt2git/taxonomy.yaml
+.gpt2git/config.yaml
+KnowledgeUnit semantics
+CREATE / MERGE / NO-OP
+```
+
+The current Skill is the reasoning layer. A future MCP may own profile retrieval, topic resolution, repository search/merge, persistence, and commit verification without redefining the protocol.
 
 ## Hard Rules
 
-- **Never raw-export the conversation as the knowledge note.**
-- **Never discard meaningful follow-ups just because the final answer already contains the conclusion.**
-- **Never invent a misconception, user experience, metric, production incident, or historical fact.**
-- **Never persist secrets, credentials, tokens, private keys, or passwords from the conversation.**
-- **Never overwrite unrelated knowledge while merging.**
-- **Never claim `已提交` / `已更新` without a successful GitHub write result.**
-- **Never force the default taxonomy onto a repository that already has a coherent structure.**
+- Never silently persist ordinary conversations without user intent.
+- Never raw-export the conversation as the note.
+- Never discard meaningful follow-ups.
+- Never invent misconceptions, experience, metrics, incidents, or facts.
+- Never persist secrets or credentials.
+- Never overwrite unrelated knowledge while merging.
+- Never claim `已提交` / `已更新` without a successful write result.
+- Never eagerly create dozens of empty directories or placeholder files.
+- Never create separate knowledge trees for ChatGPT / Claude / Codex.
 
 ## Completion Report
 
-After a successful capture, report only the useful result:
+After success:
 
 ```text
-MERGE  knowledge/java/spring.md
+MERGE  knowledge/frameworks/spring.md
 Topic: Spring 事务自调用
-Commit: <verified commit sha or available commit reference>
+Commit: <verified commit reference>
 ```
 
-For a no-op:
+For duplicate knowledge:
 
 ```text
 NO-OP  knowledge/database/mysql.md
-Reason: 本次问答没有增加新的追问、误区或结论。
+Reason: no meaningful new follow-up, misconception, or conclusion.
 ```
 
 If persistence fails, say so plainly and do not fabricate success.
