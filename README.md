@@ -1,0 +1,2 @@
+# GPT2Git-Note
+把chatgpt或者其他工具的回答整理到github里，将github作为个人知识库的载体
