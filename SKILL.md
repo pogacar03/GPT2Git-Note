@@ -50,23 +50,51 @@ When the user expresses capture intent such as `收录`, `记一下`, `存到 Gi
 6. search before writing and choose CREATE / MERGE / NO-OP;
 7. **one Markdown file represents one interview/learning question; use the question itself as the filename**;
 8. if the same question already exists, semantically MERGE into that question file instead of creating an aggregate topic file;
-9. write a durable knowledge artifact, not `User:` / `Assistant:` transcript blocks;
-10. verify persistence before reporting success.
+9. apply an explicit user-provided star importance prefix before writing or renaming;
+10. write a durable knowledge artifact, not `User:` / `Assistant:` transcript blocks;
+11. verify persistence before reporting success.
 
 ## Note Presentation
 
 Captured knowledge should be optimized for later review, not only archival completeness.
 
 - **One `.md` = one question.** Do not aggregate multiple questions into files such as `llm.md`, `mysql.md`, or `spring.md` when using question-note mode.
-- Use the learner's actual question, or a stable cleaned-up version of it, as both the Markdown filename and the top-level topic heading. Example: `knowledge/ai/为什么长上下文中间的信息更容易丢？.md`.
+- Use the learner's actual question, or a stable cleaned-up version of it, as both the Markdown filename and the top-level topic heading.
 - When `learning.interview_mode: true`, put a concise `### 面试回答` immediately after the topic heading so the note is useful for rapid interview review.
 - Put detailed explanation, follow-up reasoning, misconceptions/corrections, evidence, and mental models after the interview answer.
 - Prefer question-shaped filenames/headings because they match how interviewers ask and how learners retrieve knowledge.
 
+## Importance Stars
+
+When the user explicitly gives an importance level in stars, treat that as title metadata expressed through a visible prefix.
+
+Rules:
+
+- `1颗星` / `一颗星` → prefix `⭐`
+- `2颗星` / `两颗星` → prefix `⭐⭐`
+- `3颗星` / `三颗星` → prefix `⭐⭐⭐`
+- Put the star prefix at the **very beginning of both the Markdown filename and the top-level question heading**.
+- Do not insert spaces between the star prefix and the question in the filename.
+- If the user changes the star level later, rename the existing question file and update its top-level heading instead of creating a duplicate note.
+- Star prefixes are not part of semantic duplicate matching. `为什么长上下文中间的信息更容易丢？` and `⭐⭐⭐为什么长上下文中间的信息更容易丢？` are the same question for MERGE/NO-OP purposes.
+- If the user does not specify an importance level, do not invent one.
+
+Examples:
+
+```text
+knowledge/ai/⭐⭐⭐为什么长上下文中间的信息更容易丢？.md
+knowledge/database/⭐SQLite和MySQL怎么选型？.md
+```
+
+```markdown
+# ⭐Agent架构有哪些？
+# ⭐⭐⭐为什么长上下文中间的信息更容易丢？
+```
+
 Recommended interview-note shape:
 
 ```markdown
-## <面试问题原句或稳定的问题表达>
+# <⭐... + 面试问题原句或稳定的问题表达>
 
 ### 面试回答
 > <可直接口述的简洁答案>
@@ -149,22 +177,23 @@ The current Skill is the reasoning layer. A future MCP may own profile retrieval
 - Never eagerly create dozens of empty directories or placeholder files.
 - Never create separate knowledge trees for ChatGPT / Claude / Codex.
 - Never use an aggregate topic file when the intended knowledge unit is an individual interview/learning question.
+- Never create a second note merely because the star prefix changed.
 
 ## Completion Report
 
 After success:
 
 ```text
-CREATE  knowledge/ai/为什么长上下文中间的信息更容易丢？.md
-Topic: 为什么长上下文中间的信息更容易丢？
+CREATE  knowledge/ai/⭐⭐⭐为什么长上下文中间的信息更容易丢？.md
+Topic: ⭐⭐⭐为什么长上下文中间的信息更容易丢？
 Commit: <verified commit reference>
 ```
 
 For an existing question:
 
 ```text
-MERGE  knowledge/database/MySQL为什么使用B+树而不是B树？.md
-Topic: MySQL为什么使用B+树而不是B树？
+MERGE  knowledge/database/⭐SQLite和MySQL怎么选型？.md
+Topic: ⭐SQLite和MySQL怎么选型？
 Commit: <verified commit reference>
 ```
 
