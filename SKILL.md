@@ -52,6 +52,33 @@ When the user expresses capture intent such as `收录`, `记一下`, `存到 Gi
 8. write a durable knowledge artifact, not `User:` / `Assistant:` transcript blocks;
 9. verify persistence before reporting success.
 
+## Note Presentation
+
+Captured knowledge should be optimized for later review, not only archival completeness.
+
+- Use the learner's actual question as the topic heading when it is clear and reusable, e.g. `## 为什么长上下文中间的信息更容易丢？`, rather than prefixing it with an internal concept label.
+- When `learning.interview_mode: true`, put a concise `### 面试回答` immediately after the topic heading so the note is useful for rapid interview review.
+- Put detailed explanation, follow-up reasoning, misconceptions/corrections, evidence, and mental models after the interview answer.
+- Prefer question-shaped headings for interview knowledge because they match how interviewers ask and how learners retrieve knowledge.
+
+Recommended interview-note shape:
+
+```markdown
+## <面试问题原句或稳定的问题表达>
+
+### 面试回答
+> <可直接口述的简洁答案>
+
+### 核心结论
+...
+
+### 追问 / 易错点 / 原理
+...
+
+### 一句话速记
+...
+```
+
 ## Knowledge Priority
 
 When compression is necessary:
@@ -61,6 +88,8 @@ When compression is necessary:
 3. final mental model;
 4. primary question + core answer;
 5. supplementary examples.
+
+This priority controls what knowledge survives compression; it does not dictate display order. In interview mode, the interview answer still appears first.
 
 ## Adaptive Structure
 
