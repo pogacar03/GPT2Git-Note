@@ -48,18 +48,20 @@ When the user expresses capture intent such as `收录`, `记一下`, `存到 Gi
 4. never invent a misconception;
 5. resolve the destination from repository state + `.gpt2git` profile/taxonomy + current mechanism;
 6. search before writing and choose CREATE / MERGE / NO-OP;
-7. prefer semantic merge and stable files over one-file-per-question;
-8. write a durable knowledge artifact, not `User:` / `Assistant:` transcript blocks;
-9. verify persistence before reporting success.
+7. **one Markdown file represents one interview/learning question; use the question itself as the filename**;
+8. if the same question already exists, semantically MERGE into that question file instead of creating an aggregate topic file;
+9. write a durable knowledge artifact, not `User:` / `Assistant:` transcript blocks;
+10. verify persistence before reporting success.
 
 ## Note Presentation
 
 Captured knowledge should be optimized for later review, not only archival completeness.
 
-- Use the learner's actual question as the topic heading when it is clear and reusable, e.g. `## 为什么长上下文中间的信息更容易丢？`, rather than prefixing it with an internal concept label.
+- **One `.md` = one question.** Do not aggregate multiple questions into files such as `llm.md`, `mysql.md`, or `spring.md` when using question-note mode.
+- Use the learner's actual question, or a stable cleaned-up version of it, as both the Markdown filename and the top-level topic heading. Example: `knowledge/ai/为什么长上下文中间的信息更容易丢？.md`.
 - When `learning.interview_mode: true`, put a concise `### 面试回答` immediately after the topic heading so the note is useful for rapid interview review.
 - Put detailed explanation, follow-up reasoning, misconceptions/corrections, evidence, and mental models after the interview answer.
-- Prefer question-shaped headings for interview knowledge because they match how interviewers ask and how learners retrieve knowledge.
+- Prefer question-shaped filenames/headings because they match how interviewers ask and how learners retrieve knowledge.
 
 Recommended interview-note shape:
 
@@ -79,6 +81,16 @@ Recommended interview-note shape:
 ...
 ```
 
+Recommended path shape:
+
+```text
+knowledge/ai/为什么长上下文中间的信息更容易丢？.md
+knowledge/database/MySQL为什么使用B+树而不是B树？.md
+knowledge/frameworks/Spring事务为什么会自调用失效？.md
+```
+
+The directory provides broad taxonomy; the file provides the individual question.
+
 ## Knowledge Priority
 
 When compression is necessary:
@@ -93,21 +105,21 @@ This priority controls what knowledge survives compression; it does not dictate 
 
 ## Adaptive Structure
 
-Route by stable mechanism, not job title.
+Route the **directory** by stable mechanism/domain, then store each question as its own Markdown file.
 
-Prefer shallow homes such as:
+Prefer shallow domain directories such as:
 
 ```text
-knowledge/frameworks/spring.md
-knowledge/database/mysql.md
-knowledge/cache/redis.md
-knowledge/messaging/kafka.md
-knowledge/ai/agent.md
+knowledge/frameworks/<question>.md
+knowledge/database/<question>.md
+knowledge/cache/<question>.md
+knowledge/messaging/<question>.md
+knowledge/ai/<question>.md
 ```
 
 Avoid deep role-first paths such as `backend/middleware/cache/redis/...`.
 
-If the repository already has a coherent custom taxonomy, preserve it and describe it in `.gpt2git/taxonomy.yaml` rather than migrating it automatically.
+If the repository already has a coherent custom taxonomy, preserve its directory taxonomy and describe it in `.gpt2git/taxonomy.yaml`; question-level files remain the default unit of knowledge.
 
 ## Portable Protocol
 
@@ -136,21 +148,30 @@ The current Skill is the reasoning layer. A future MCP may own profile retrieval
 - Never claim `已提交` / `已更新` without a successful write result.
 - Never eagerly create dozens of empty directories or placeholder files.
 - Never create separate knowledge trees for ChatGPT / Claude / Codex.
+- Never use an aggregate topic file when the intended knowledge unit is an individual interview/learning question.
 
 ## Completion Report
 
 After success:
 
 ```text
-MERGE  knowledge/frameworks/spring.md
-Topic: Spring 事务自调用
+CREATE  knowledge/ai/为什么长上下文中间的信息更容易丢？.md
+Topic: 为什么长上下文中间的信息更容易丢？
+Commit: <verified commit reference>
+```
+
+For an existing question:
+
+```text
+MERGE  knowledge/database/MySQL为什么使用B+树而不是B树？.md
+Topic: MySQL为什么使用B+树而不是B树？
 Commit: <verified commit reference>
 ```
 
 For duplicate knowledge:
 
 ```text
-NO-OP  knowledge/database/mysql.md
+NO-OP  <existing-question-file>.md
 Reason: no meaningful new follow-up, misconception, or conclusion.
 ```
 
